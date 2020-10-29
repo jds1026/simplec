@@ -1,0 +1,56 @@
+
+*************** SIMPLEC COMPILATION RESULTS ***************
+
+               ******* PROGRAM TREES *******
+           >>> ASSIGN NODE '=' HAS CHILDREN <<<
+               ID NODE alpha
+               CONST NODE number VALUE 4
+
+           >>> ASSIGN NODE '=' HAS CHILDREN <<<
+               ID NODE sum
+           >>> ARITHMIC OPERATOR '+' HAS CHILDREN <<<
+               ID NODE alpha
+           >>> ARITHMIC OPERATOR '*' HAS CHILDREN <<<
+               CONST NODE number VALUE 4
+               CONST NODE number VALUE 9
+
+           >>> MAIN EXITED WITH RETURN VALUE 0 <<<
+               *****************************
+
+
+               ******* SYMBOL TABLE ********
+          Token:  5, Lexeme:       if, Index:   7
+          Token: 11, Lexeme:     char, Index:  14
+          Token:  3, Lexeme:     main, Index:  21
+          Token:  6, Lexeme:     else, Index:  25
+          Token: 12, Lexeme:     void, Index:  34
+          Token: 25, Lexeme:        (, Index:  40
+          Token: 26, Lexeme:        ), Index:  41
+          Token: 15, Lexeme:        *, Index:  42
+          Token: 13, Lexeme:        +, Index:  43
+          Token: 14, Lexeme:        -, Index:  45
+          Token: 16, Lexeme:        /, Index:  47
+          Token:  1, Lexeme:        0, Index:  48
+          Token:  1, Lexeme:        4, Index:  52
+          Token:  1, Lexeme:        9, Index:  57
+          Token: 24, Lexeme:        ;, Index:  59
+          Token: 17, Lexeme:        <, Index:  60
+          Token: 23, Lexeme:        =, Index:  61
+          Token: 21, Lexeme:        >, Index:  62
+          Token:  4, Lexeme:   return, Index:  72
+          Token: 22, Lexeme:       !=, Index:  94
+          Token:  0, Lexeme:    alpha, Index: 118
+          Token: 18, Lexeme:       <=, Index: 121
+          Token: 19, Lexeme:       ==, Index: 122
+          Token: 20, Lexeme:       >=, Index: 123
+          Token: 27, Lexeme:        {, Index: 123 ==> from overflow bucket
+          Token: 28, Lexeme:        }, Index: 125
+          Token:  8, Lexeme:      int, Index: 131
+          Token: 10, Lexeme:      exp, Index: 133
+          Token:  9, Lexeme:    float, Index: 134
+          Token:  7, Lexeme:    while, Index: 137
+          Token:  0, Lexeme:      sum, Index: 141
+               *****************************
+
+
+***********************************************************
