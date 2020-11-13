@@ -13,23 +13,23 @@ H_table* init_symtable()
 	ht_insert(ht, "main",   TK_MAIN,    "main");
 	ht_insert(ht, "return", TK_RETURN,  "return");
 	ht_insert(ht, "while",  TK_WHILE,   "while");
-	ht_insert(ht, "if",     TK_IF, 	    "if");
+	ht_insert(ht, "if",     TK_IF,      "if");
 	ht_insert(ht, "else",   TK_ELSE,    "else");
-	ht_insert(ht, "int",    TK_INT, 	"int");
+	ht_insert(ht, "int",    TK_INT,     "int");
 	ht_insert(ht, "float",  TK_FLOAT,   "float");
 	ht_insert(ht, "exp",    TK_EXP,     "exp");
-	ht_insert(ht, "char",   TK_CHAR, 	"char");
-	ht_insert(ht, "void",   TK_VOID, 	"void");
+	ht_insert(ht, "char",   TK_CHAR,    "char");
+	ht_insert(ht, "void",   TK_VOID,    "void");
 	ht_insert(ht, "+",      TK_ADD,     "+");
 	ht_insert(ht, "-",      TK_SUB,     "-");
-	ht_insert(ht, "*",      TK_MUL,	    "*");
-	ht_insert(ht, "/",      TK_DIV,  	"/");
-	ht_insert(ht, "<",      TK_LT,   	"<");
-	ht_insert(ht, "<=",     TK_LE,	    "<=");
-	ht_insert(ht, "==",     TK_EQ,  	"==");
-	ht_insert(ht, ">=",     TK_GE, 	    ">=");
-	ht_insert(ht, ">",      TK_GT,  	">");
-	ht_insert(ht, "!=",     TK_NE,      "!=");
+	ht_insert(ht, "*",      TK_MUL,     "*");
+	ht_insert(ht, "/",      TK_DIV,     "/");
+	ht_insert(ht, "<",      TK_LT,      "<");
+	ht_insert(ht, "<=",     TK_LE,      "<=");
+	ht_insert(ht, "==",     TK_EQ,      "==");
+	ht_insert(ht, ">=",     TK_GE,      ">=");
+	ht_insert(ht, ">",      TK_GT,      ">");
+	ht_insert(ht, "!=",     TK_NE       "!=");
 	ht_insert(ht, "=",      TK_ASSIGN,  "=");
 	ht_insert(ht, ";",      TK_SMCOLON, ";");
 	ht_insert(ht, "(",      TK_LPAREN,  "(");
@@ -54,8 +54,8 @@ unsigned long hash_f(char* key)
 HT_item* create_item(char* key, Token tok, char* lexm)
 {
 	HT_item* item  = (HT_item*)malloc(sizeof(HT_item));
-	item->lexeme = (char*)malloc(sizeof(lexm));
-	item->key = (char*)malloc(sizeof(key));
+	item->lexeme   = (char*)malloc(sizeof(lexm));
+	item->key      = (char*)malloc(sizeof(key));
 
 	item->token = tok;
 	strcpy(item->lexeme, lexm);
@@ -114,7 +114,7 @@ Token get_token(H_table* table, char* key)
 {
 	unsigned int index = hash_f(key);
 	HT_item* item = table->items[index];
-	Linked_list* head = table->buckets[index];
+	Linked_List* head  = table->buckets[index];
 	while (item != NULL) {
 		if (strcmp(item->key, key) == 0) {
 			return item->token;
@@ -140,7 +140,7 @@ void handle_collision(H_table* table, unsigned long index, HT_item* item)
 		return;
 	}
 
-	Linked_list* head = table->buckets[index];
+	Linked_List* head = table->buckets[index];
 
 	if (head == NULL) {
 		head = create_list();
@@ -161,9 +161,10 @@ void print_table(H_table* table, FILE* fp)
 				table->items[index]->token,
 				table->items[index]->lexeme,
 				hash_f(table->items[index]->key));
+
 			if (table->buckets[index] != NULL) {
-				Linked_list* head = table->buckets[index];
-				// printf("Token: %2d => overflow bucket => ", head->item->token);
+				Linked_List* head = table->buckets[index];
+
 				while (head) {
 					fprintf(fp, "%10sToken: %2d, Lexeme: %8s, Index: %3lu ==> from overflow bucket\n", " ",
 						head->item->token,
@@ -178,43 +179,33 @@ void print_table(H_table* table, FILE* fp)
 }
 
 // called by list_insert for collision handling
-Linked_list* create_list()
+Linked_List* create_list()
 {
-	Linked_list* list = (Linked_list*)malloc(sizeof(Linked_list));
+	Linked_List* list = (Linked_List*)malloc(sizeof(Linked_List));
 	return list;
 }
 
 // called by handle_collision
-Linked_list* list_insert(Linked_list* list, HT_item* item)
+Linked_List* list_insert(Linked_List* list, HT_item* item)
 {
-	// // empty list
-	// if (list == NULL) {
-	// 	Linked_list* head = create_list();
-	// 	head->item = item;
-	// 	head->next = NULL;
-
-	// 	list = head;
-	// 	return list;
-	// }
-
 	// walk list and insert
-	Linked_list* current = list;
+	Linked_List* current = list;
 	while (current->next != NULL) {
 		current = current->next;
 	}
-	Linked_list* new_list = create_list();
-	new_list->item = item;
-	new_list->next = NULL;
-	current->next = new_list;
+	Linked_List* new_list = create_list();
+	new_list->item        = item;
+	new_list->next        = NULL;
 
+	current->next = new_list;
 	return new_list;
 }
 
 // called by create_table
-Linked_list** create_buckets(H_table* table)
+Linked_List** create_buckets(H_table* table)
 {
-	Linked_list** buckets = (Linked_list**)calloc(table->size, 
-								sizeof(Linked_list**));
+	Linked_List** buckets = (Linked_List**)calloc(table->size, 
+							sizeof(Linked_List**));
 	for (unsigned int i = 0; i < table->size; i++) {
 		buckets[i] = NULL;
 	}
@@ -245,10 +236,10 @@ void free_item(HT_item* item)
 }
 
 // called by free_buckets
-void free_list(Linked_list* list)
+void free_list(Linked_List* list)
 {
 	while (list != NULL) {
-		Linked_list* temp = list;
+		Linked_List* temp = list;
 		list = list->next;
 		free(temp->item->lexeme);
 		free(temp->item->key);
@@ -260,7 +251,7 @@ void free_list(Linked_list* list)
 // called by free_table
 void free_buckets(H_table* table)
 {
-	Linked_list** buckets = table->buckets;
+	Linked_List** buckets = table->buckets;
 	for (unsigned int i = 0; i < table->size; i++) {
 		free_list(buckets[i]);
 	}

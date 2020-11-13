@@ -4,7 +4,7 @@
 AST_Node* create_AST_node()
 {
 	AST_Node* new_node = (AST_Node*)malloc(sizeof(AST_Node));
-	new_node = NULL;
+	new_node           = NULL;
 
 	return new_node;
 }
@@ -37,9 +37,9 @@ AST_Node* create_AST_const_node(Data_Type data_type, char* value)
 {
 	AST_Const_Node* new_node = malloc(sizeof(AST_Const_Node));
 
-	new_node->type = CONST_NODE;
+	new_node->type      = CONST_NODE;
 	new_node->data_type = data_type;
-	new_node->value = value;
+	new_node->value     = value;
 
 	return (AST_Node*)new_node;
 }
@@ -48,12 +48,11 @@ AST_Node* create_AST_if_node(AST_Node* condition, AST_Node* if_branch, AST_Node*
 {
 	AST_If_Node* new_node = malloc(sizeof(AST_If_Node));
 
-	new_node->type = IF_NODE;
-	new_node->condition = condition;
-	new_node->if_branch = if_branch;
+	new_node->type        = IF_NODE;
+	new_node->condition   = condition;
+	new_node->if_branch   = if_branch;
 	new_node->else_branch = else_branch;
-
-	new_node->next = NULL;
+	new_node->next        = NULL;
 
 	return (AST_Node*)new_node;
 }
@@ -62,10 +61,10 @@ AST_Node* create_AST_while_node(AST_Node* condition, AST_Node* while_branch)
 {
 	AST_While_Node* new_node = malloc(sizeof(AST_While_Node));
 
-	new_node->type = WHILE_NODE;
-	new_node->condition = condition;
+	new_node->type         = WHILE_NODE;
+	new_node->condition    = condition;
 	new_node->while_branch = while_branch;
-	new_node->next = NULL;
+	new_node->next         = NULL;
 
 	return (AST_Node*)new_node;
 }
@@ -73,13 +72,12 @@ AST_Node* create_AST_while_node(AST_Node* condition, AST_Node* while_branch)
 AST_Node* create_AST_assign_node(HT_item* item, AST_Node* value)
 {
 	AST_Assign_Node* new_node = malloc(sizeof(AST_Assign_Node));
+	AST_Node* lop = create_AST_ID_node(item);
 
-	new_node->type = ASSIGN_NODE;
-	AST_Node* temp = create_AST_ID_node(item);
-
-	new_node->loperand = temp;
-	new_node->value = value;
-	new_node->next = NULL;
+	new_node->type     = ASSIGN_NODE;
+	new_node->loperand = lop;
+	new_node->value    = value;
+	new_node->next     = NULL;
 
 	return (AST_Node*)new_node;
 }
@@ -88,11 +86,11 @@ AST_Node* create_AST_arithm_node(Arithm_Op operator, AST_Node* left, AST_Node* r
 {
 	AST_Arithm_Node* new_node = malloc(sizeof(AST_Arithm_Node));
 
-	new_node->type = ARITHM_NODE;
+	new_node->type     = ARITHM_NODE;
 	new_node->operator = operator;
-	new_node->left = left;
-	new_node->right = right;
-	new_node->next = NULL;
+	new_node->left     = left;
+	new_node->right    = right;
+	new_node->next     = NULL;
 
 	return (AST_Node*)new_node;
 }
@@ -101,10 +99,10 @@ AST_Node* create_AST_relat_node(Relat_Op operator, AST_Node* left, AST_Node* rig
 {
 	AST_Relat_Node* new_node = malloc(sizeof(AST_Relat_Node));
 
-	new_node->type = RELAT_NODE;
+	new_node->type     = RELAT_NODE;
 	new_node->operator = operator;
-	new_node->left = left;
-	new_node->right = right;
+	new_node->left     = left;
+	new_node->right    = right;
 
 	return (AST_Node*)new_node;
 }
@@ -113,9 +111,9 @@ AST_Node* create_AST_return_node(int ret_type, char* ret_val)
 {
 	AST_Return_Node* new_node = malloc(sizeof(AST_Return_Node));
 
-	new_node->type = RETURN_NODE;
+	new_node->type     = RETURN_NODE;
 	new_node->ret_type = ret_type;
-	new_node->ret_val = ret_val;
+	new_node->ret_val  = ret_val;
 
 	return (AST_Node*)new_node;
 }

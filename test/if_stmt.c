@@ -4,6 +4,12 @@ int main(void)
 	int less = 8;
 
 	if (less == more) {
+		if (less > 10) {
+			int var = 34;
+		}
+		else {
+			int red = 'r';
+		}
 		less = 7;
 	}
 	else {
