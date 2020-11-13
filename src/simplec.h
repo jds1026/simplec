@@ -33,15 +33,15 @@ typedef struct HT_item {
 
 // singly linked list structure used to handle 
 // hash collision overflow in the hashtable
-typedef struct Linked_list {
+typedef struct Linked_List {
 	HT_item*            item;
-	struct Linked_list* next;
-} Linked_list;
+	struct Linked_List* next;
+} Linked_List;
 
 // symbol table
 typedef struct H_table {
 	HT_item**     items;
-	Linked_list** buckets;
+	Linked_List** buckets;
 	unsigned int  size;
 	unsigned int  count;
 } H_table;
@@ -73,7 +73,7 @@ typedef enum Data_Type {
 
 // node definitions
 typedef struct AST_Node {
-	Node_Type type;
+	Node_Type        type;
 	struct AST_Node* left;
 	struct AST_Node* right;
 	struct AST_Node* next;
@@ -137,7 +137,7 @@ typedef struct AST_Return_Node {
 H_table*     ht;
 HT_item*     item_ptr;
 FILE*        source;
-FILE*		 output;
+FILE*        output;
 unsigned int lineno;
 
 // main.c
@@ -194,12 +194,12 @@ void          ht_insert(H_table* table, char* key, Token tok, char* lexm);
 Token         get_token(H_table* table, char* key);
 void 	      handle_collision(H_table* table, unsigned long index, HT_item* item);
 void          print_table(H_table* table, FILE* fp);
-Linked_list*  create_list();
-Linked_list*  list_insert(Linked_list* list, HT_item* item);
-Linked_list** create_buckets(H_table* table);
+Linked_List*  create_list();
+Linked_List*  list_insert(Linked_List* list, HT_item* item);
+Linked_List** create_buckets(H_table* table);
 void          free_table(H_table* table);
 void          free_item(HT_item* item);
-void          free_list(Linked_list* list);
+void          free_list(Linked_List* list);
 void          free_buckets(H_table* table);
 
 #endif
