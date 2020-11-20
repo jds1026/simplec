@@ -29,7 +29,7 @@ H_table* init_symtable()
 	ht_insert(ht, "==",     TK_EQ,      "==");
 	ht_insert(ht, ">=",     TK_GE,      ">=");
 	ht_insert(ht, ">",      TK_GT,      ">");
-	ht_insert(ht, "!=",     TK_NE       "!=");
+	ht_insert(ht, "!=",     TK_NE,      "!=");
 	ht_insert(ht, "=",      TK_ASSIGN,  "=");
 	ht_insert(ht, ";",      TK_SMCOLON, ";");
 	ht_insert(ht, "(",      TK_LPAREN,  "(");
