@@ -13,12 +13,12 @@
 // token values that will be used by the lexer and parser 
 // to identify and define the symbol read in the source file
 typedef enum {
-	TK_ID, TK_NUM, TK_CHARACTER,					// identifier, number, character
+	TK_ID, TK_NUM, TK_CHARACTER,                    // identifier, number, character
 	TK_MAIN, TK_RETURN, TK_IF, TK_ELSE, TK_WHILE,   // reserved keywords
 	TK_INT, TK_FLOAT, TK_EXP, TK_CHAR, TK_VOID,						
-	TK_ADD, TK_SUB, TK_MUL, TK_DIV,					// arithmetic operators
-	TK_LT, TK_LE, TK_EQ, TK_GE, TK_GT, TK_NE,		// relational operators
-	TK_ASSIGN, TK_SMCOLON, TK_LPAREN, TK_RPAREN,	// punctuation
+	TK_ADD, TK_SUB, TK_MUL, TK_DIV,                 // arithmetic operators
+	TK_LT, TK_LE, TK_EQ, TK_GE, TK_GT, TK_NE,       // relational operators
+	TK_ASSIGN, TK_SMCOLON, TK_LPAREN, TK_RPAREN,    // punctuation
 	TK_LBRACE, TK_RBRACE
 } Token;
 
