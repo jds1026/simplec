@@ -1,7 +1,7 @@
 # simplec
 A small and simple compiler front end for a C grammar subset. 
 simplec is a one-pass compiler that implements recursive descent 
-parsing. The compiler reads as input a .c file and builds an
+parsing. The compiler reads as input a C source file and builds an
 intermediate representation in the form of an abstract syntax tree.
 
 ---
