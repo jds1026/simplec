@@ -47,33 +47,28 @@ void block(AST_Node** stmts_head)
 void parse_stmts(AST_Node** stmts_head)
 {
 	while (1) {
-		lineno += 1;
 		switch (lookahead) {
 			case TK_ID: {
 				AST_Node* assign_node = parse_assign_stmt();
 				add_to_stmt_node_list(stmts_head, assign_node);
-				match(TK_SMCOLON);
 				break;
 			}
 			case TK_INT: {
 				match(TK_INT);
 				AST_Node* assign_node = parse_assign_stmt();
 				add_to_stmt_node_list(stmts_head, assign_node);
-				match(TK_SMCOLON);
 				break;
 			}
 			case TK_FLOAT: {
 				match(TK_FLOAT);
 				AST_Node* assign_node = parse_assign_stmt();
 				add_to_stmt_node_list(stmts_head, assign_node);
-				match(TK_SMCOLON);
 				break;
 			}
 			case TK_CHAR: {
 				match(TK_CHAR);
 				AST_Node* assign_node = parse_assign_stmt();
 				add_to_stmt_node_list(stmts_head, assign_node);
-				match(TK_SMCOLON);
 				break;
 			}
 			case TK_IF: {
@@ -105,10 +100,26 @@ AST_Node* parse_assign_stmt()
 	match(TK_ID);
 	match(TK_ASSIGN);
 
-	// TRIAL
+	// linecheck is used in the case of a
+	// missing semicolon with a newline present
+	unsigned int linecheck = lineno;
+
 	AST_Node* expr = parse_expr_stmt();
-	AST_Node* assign_node = create_AST_assign_node(id, expr);
-	return assign_node;
+
+	if (expect(TK_SMCOLON)) {
+		match(TK_SMCOLON);
+		AST_Node* assign_node = create_AST_assign_node(id, expr);
+		return assign_node;
+	}
+	else if (linecheck == lineno) {
+		fprintf(stderr, "error on line %d\n", lineno);
+		exit(1);
+	}
+	else {
+		fprintf(stderr, "error on line %d\n", linecheck);
+		exit(1);
+	}
+
 }
 
 AST_Node* parse_expr_stmt()

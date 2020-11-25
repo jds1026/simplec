@@ -12,6 +12,7 @@ static unsigned int start = 0;
 
 extern H_table* ht;
 extern FILE* source;
+extern unsigned int lineno;
 
 // change starting state
 int fail()
@@ -64,6 +65,11 @@ Token lexan()
 				c = fgetc(source);
 				if (c == BLANK || c == TAB || c == NEWLINE) {
 					state = 0;
+
+					if (c == NEWLINE) {
+						lineno += 1;
+					}
+					
 					break;
 				}
 				// if ID or keyword
