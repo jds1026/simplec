@@ -1,56 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "simplec.h"
 
-// state and start are used for 
-// transitioning between different
-// starting states depending
-// on the current input symbol
+/* 
+state and start are used for
+transitioning between different
+starting states depending
+on the current input symbol
+*/
+
 static unsigned int state = 0;
 static unsigned int start = 0;
 
 extern H_table* ht;
 extern FILE* source;
 extern unsigned int lineno;
+extern HT_item* item_ptr;
+extern Literal_Type literal;
 
-// change starting state
-int fail()
+/* switch starting state */
+
+static int fail()
 {
 	switch (state) {
 		case 0: {
-			// character check
+
+			/* character check */
+
 			start = 3;
 			break;
 		}
 		case 3: {
-			// number check
+
+			/* number check */
+
 			start = 7;
 			break;
 		}
 		case 7: {
-			// arithop check
+
+			/* arithop check */
+
 			start = 17;
 			break;
 		}
 		case 17: {
-			// relop check
+
+			/* relop check */
+
 			start = 24;
 			break;
 		}
 		case 24: {
-			// punct check
+
+			/* punct check */
+
 			start = 36;
 			break;
 		}
 		case 36: {
-			// error 
+
+			/* token error */
+			
 			fprintf(stderr, "lexer error: invalid token\n");
 			exit(1);
 		}
 	}
 	return start;
 }
+
+/* Lexer */
 
 Token lexan()
 {
@@ -72,7 +93,6 @@ Token lexan()
 					
 					break;
 				}
-				// if ID or keyword
 				else if (isalpha(c)) {
 					lexbuff[idx] = c;
 					idx++;
@@ -100,20 +120,23 @@ Token lexan()
 				}
 			}
 			case 2: {
-				// ID or keyword insert
+
+				/* ID or keyword */
+
 				ungetc(c, source);
 				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_ID, lexbuff);
-				tok = get_token(ht, lexbuff);
-				
+
+				if (!token_is_keyword(lexbuff, &tok)) {
+					ht_insert(ht, TK_ID, lexbuff);
+					tok = get_token(ht, lexbuff);
+				}
+
 				state = 0;
 				idx = 0;
 				return tok;
 			}
 			case 3: {
 				if (c == '\'') {
-					lexbuff[idx] = c;
-					idx++;
 					state = 4;
 					break;
 				}
@@ -125,8 +148,9 @@ Token lexan()
 			case 4: {
 				c = fgetc(source);
 				if (isalpha(c)) {
-					lexbuff[idx] = c;
-					idx++;
+					literal.type = T_CHAR;
+					literal.val.c = c;
+
 					state = 5;
 					break;
 				}
@@ -134,21 +158,13 @@ Token lexan()
 			case 5: {
 				c = fgetc(source);
 				if (c == '\'') {
-					lexbuff[idx] = c;
-					idx++;
 					state = 6;
 					break;
 				}
 			}
 			case 6: {
-				// char insert
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_CHARACTER, lexbuff);
-				tok = get_token(ht, lexbuff);
-
 				state = 0;
-				idx = 0;	
-				return tok;
+				return TK_CHARACTER;
 			}
 			case 7: {
 				if (isdigit(c)) {
@@ -241,37 +257,43 @@ Token lexan()
 				}
 			}
 			case 14: {
-				// exponential insert
+
+				/* float with exponent */
+
 				ungetc(c, source);
 				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_NUM, lexbuff);
-				tok = get_token(ht, lexbuff);
+				literal.type = T_EXP;
+				literal.val.f = atof(lexbuff);
 
 				state = 0;
 				idx = 0;
-				return tok;
+				return TK_NUM;
 			}
 			case 15: {
-				// int insert
+
+				/* integer */
+
 				ungetc(c, source);
 				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_NUM, lexbuff);
-				tok = get_token(ht, lexbuff);
+				literal.type = T_INT;
+				literal.val.i = atoi(lexbuff);
 
 				state = 0;
 				idx = 0;
-				return tok;
+				return TK_NUM;
 			}
 			case 16: {
-				// float insert
+
+				/* float */
+
 				ungetc(c, source);
 				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_NUM, lexbuff);
-				tok = get_token(ht, lexbuff);
+				literal.type = T_FLOAT;
+				literal.val.f = atof(lexbuff);
 
 				state = 0;
 				idx = 0;
-				return tok;
+				return TK_NUM;
 			}
 			case 17: {
 				if (c == '+') {
@@ -296,41 +318,27 @@ Token lexan()
 				}
 			}
 			case 18: {
-				// '+' insert
-				lexbuff[idx] = c;
-				idx++;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_ADD, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '+' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_ADD;
 			}
 			case 19: {
-				// '-' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_SUB, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '-' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_SUB;
 			}
 			case 20: {
-				// '*' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_MUL, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '*' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_MUL;
 			}
 			case 21: {
-				lexbuff[idx++] = c;
 				c = fgetc(source);
 				if (c == '/') {
 					state = 22;
@@ -342,26 +350,24 @@ Token lexan()
 				}
 			}
 			case 22: {
-				// handle comments
+
+				/* comments */
+
 				while (c != NEWLINE) {
 					c = fgetc(source);
 					continue;
 				}
-
-				idx = 0;
 				state = 0;
 				break;
 			}
 			case 23: {
-				// '/' insert
+
+				/* '/' */
+
 				ungetc(c, source);
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_DIV, lexbuff);
-				tok = get_token(ht, lexbuff);
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_DIV;
 			}
 			case 24: {
 				if (c == '<') {
@@ -386,7 +392,6 @@ Token lexan()
 				}
 			}
 			case 25: {
-				lexbuff[idx++] = c;
 				c = fgetc(source);
 				if (c == '=') {
 					state = 26;
@@ -398,29 +403,22 @@ Token lexan()
 				}
 			}
 			case 26: {
-				// '<=' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_LE, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '<=' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_LE;
 			}
 			case 27: {
-				// '<' insert
+
+				/* '<' */
+
 				ungetc(c, source);
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_LT, lexbuff);
-				tok = get_token(ht, lexbuff);
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_LT;
 			}
 			case 28: {
-				lexbuff[idx++] = c;
 				c = fgetc(source);
 				if (c == '=') {
 					state = 29;
@@ -432,29 +430,22 @@ Token lexan()
 				}
 			}
 			case 29: {
-				// '==' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_EQ, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '==' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_EQ;
 			}
 			case 30: {
-				// '=' insert
+
+				/* '=' */
+
 				ungetc(c, source);
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_ASSIGN, lexbuff);
-				tok = get_token(ht, lexbuff);
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_ASSIGN;
 			}
 			case 31: {
-				lexbuff[idx++] = c;
 				c = fgetc(source);
 				if (c == '=') {
 					state = 32;
@@ -466,45 +457,34 @@ Token lexan()
 				}
 			}
 			case 32: {
-				// '>=' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_GE, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '>=' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_GE;
 			}
 			case 33: {
-				// '>' insert
+
+				/* '>' */
+
 				ungetc(c, source);
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_GT, lexbuff);
-				tok = get_token(ht, lexbuff);
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_GT;
 			}
 			case 34: {
-				lexbuff[idx++] = c;
 				c = fgetc(source);
 				if (c == '=') {
-					state = 29;
+					state = 35;
 					break;
 				}
 			}
 			case 35: {
-				// '!=' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_NE, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '!=' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_NE;
 			}
 			case 36: {
 				if (c == ';') {
@@ -533,60 +513,78 @@ Token lexan()
 				}
 			}
 			case 37: {
-				// ';' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_SMCOLON, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* ';' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_SMCOLON;
 			}
 			case 38: {
-				// '(' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_LPAREN, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '(' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_LPAREN;
 			}
 			case 39: {
-				// ')' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_RPAREN, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* ')' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_RPAREN;
 			}
 			case 40: {
-				// '{' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_LBRACE, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '{' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_LBRACE;
 			}
 			case 41: {
-				// '}' insert
-				lexbuff[idx++] = c;
-				lexbuff[idx] = '\0';
-				ht_insert(ht, lexbuff, TK_RBRACE, lexbuff);
-				tok = get_token(ht, lexbuff);
+
+				/* '}' */
 
 				state = 0;
-				idx = 0;
-				return tok;
+				return TK_RBRACE;
 			}
 		}	
 	}
+}
+
+static bool token_is_keyword(char* input_buff, Token* tok)
+{
+	bool is_keyword = true;
+
+	if (strcmp(input_buff, "main") == 0) {
+		*tok = TK_MAIN;
+	}
+	else if (strcmp(input_buff, "return") == 0) {
+		*tok = TK_RETURN;
+	}
+	else if (strcmp(input_buff, "while") == 0) {
+		*tok = TK_WHILE;
+	}
+	else if (strcmp(input_buff, "if") == 0) {
+		*tok = TK_IF;
+	}
+	else if (strcmp(input_buff, "else") == 0) {
+		*tok = TK_ELSE;
+	}
+	else if (strcmp(input_buff, "int") == 0) {
+		*tok = TK_INT;
+	}
+	else if (strcmp(input_buff, "float") == 0) {
+		*tok = TK_FLOAT;
+	}
+	else if (strcmp(input_buff, "char") == 0) {
+		*tok = TK_CHAR;
+	}
+	else if (strcmp(input_buff, "void") == 0) {
+		*tok = TK_VOID;
+	}
+	else {
+		is_keyword = false;
+	}
+
+	return is_keyword;
 }
