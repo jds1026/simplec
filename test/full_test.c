@@ -6,8 +6,13 @@ int main(void)
 
 	int expr = 15 + 9 * 7 - (4 + 2) / 4;
 
+	if (humble < 9000) {
+		char hello = 'h';
+	}
+
 	if (fakenum == 42) {
 		char rain = 'r';
+		int cloud = 98;
 
 		if (rain != 'o') {
 			rain = 'o';

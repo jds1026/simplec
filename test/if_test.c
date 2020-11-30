@@ -4,6 +4,10 @@ int main(void)
 	int less = 8;
 
 	if (less == more) {
+		less = less - 1;
+	}
+
+	if (less < more) {
 		if (less > 10) {
 			int var = 34;
 		}
@@ -13,8 +17,11 @@ int main(void)
 		less = 7;
 	}
 	else {
-		more = 7;
+		more = 10;
 	}
 
 	return 0;
 }
+
+
+

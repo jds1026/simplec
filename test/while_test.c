@@ -10,5 +10,7 @@ int main(void)
 		i = i + 1;
 	}
 
+	int whatup = 97;
+
 	return 0;
 }
