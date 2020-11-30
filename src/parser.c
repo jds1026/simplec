@@ -6,12 +6,11 @@
 extern FILE* source;
 extern unsigned int lineno;
 extern HT_item* item_ptr;
+extern Literal_Type literal;
 
-// next token returned by lexer
-static unsigned int lookahead;
 
-// used for ast construction
-static unsigned int op;
+static unsigned int lookahead; /* next token returned by lexer */
+static unsigned int op;        /* used for ast construction */
 
 void parse(AST_Node** stmts_head)
 {
@@ -100,8 +99,11 @@ AST_Node* parse_assign_stmt()
 	match(TK_ID);
 	match(TK_ASSIGN);
 
-	// linecheck is used in the case of a
-	// missing semicolon with a newline present
+	/* 
+	linecheck is used in the case of a
+	missing semicolon with a newline present
+	*/
+	
 	unsigned int linecheck = lineno;
 
 	AST_Node* expr = parse_expr_stmt();
@@ -201,12 +203,21 @@ AST_Node* parse_factor()
 			return id;
 		}
 		case TK_NUM: {
-			AST_Node* num = create_AST_const_node(T_NUM, item_ptr->lexeme);
+			AST_Node* num;
+			if (literal.type == T_INT) {
+				num = create_AST_const_node(T_INT, literal);
+			}
+			else if (literal.type == T_EXP) {
+				num = create_AST_const_node(T_EXP, literal);
+			}
+			else if (literal.type == T_FLOAT) {
+				num = create_AST_const_node(T_FLOAT, literal);
+			}
 			match(TK_NUM);
 			return num;
 		}
 		case TK_CHARACTER: {
-			AST_Node* chr = create_AST_const_node(T_CHAR, item_ptr->lexeme);
+			AST_Node* chr = create_AST_const_node(T_CHAR, literal);
 			match(TK_CHARACTER);
 			return chr;
 		}
@@ -318,14 +329,12 @@ AST_Node* parse_if_stmt()
 	match(TK_LPAREN);
 	AST_Node* condition = parse_condition();
 	match(TK_RPAREN);
-	match(TK_LBRACE);
-	AST_Node* if_stmts_head = NULL;
-	parse_stmts(&if_stmts_head);
-	match(TK_RBRACE);
-	AST_Node* else_stmts_head = NULL;
-	parse_optional_tail(&else_stmts_head);
+	AST_Node* if_branch_head = NULL;
+	block(&if_branch_head);
+	AST_Node* else_branch_head = NULL;
+	parse_optional_tail(&else_branch_head);
 
-	AST_Node* if_stmt = create_AST_if_node(condition, if_stmts_head, else_stmts_head);
+	AST_Node* if_stmt = create_AST_if_node(condition, if_branch_head, else_branch_head);
 	return if_stmt;
 }
 
@@ -333,9 +342,7 @@ void parse_optional_tail(AST_Node** else_stmts)
 {
 	if (expect(TK_ELSE)) {
 		match(TK_ELSE);
-		match(TK_LBRACE);
-		parse_stmts(else_stmts);
-		match(TK_RBRACE);
+		block(else_stmts);
 	}
 }
 
@@ -363,7 +370,7 @@ AST_Node* parse_condition()
 AST_Node* parse_return_stmt()
 {
 	match(TK_RETURN);
-	if (strcmp(item_ptr->lexeme, "0") == 0) {
+	if (lookahead - 1 == 0) { /* TK_RETURN has value 1 */
 		match(TK_NUM);
 		match(TK_SMCOLON);
 		AST_Node* return_stmt = create_AST_return_node(TK_NUM, "0");
