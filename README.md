@@ -19,10 +19,9 @@ intermediate representation in the form of an abstract syntax tree.
 > simplec *somefile.c*
 
 The compiler will create, open, and write to a file called
-*compilation.txt* in the simplec directory. The output of the
+*compilation.txt* in the current working directory. The output of the
 compilation is an AST of each statement from the input source 
-file, as well as the contents of the symbol table used during
-these front end phases. 
+file, as well as the contents of the symbol table used during analysis. 
 
 For a statement like:
 > int alpha = 4;
