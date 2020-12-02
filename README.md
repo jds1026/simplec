@@ -1,6 +1,6 @@
 # simplec
 A small and simple compiler front end for a C grammar subset. 
-simplec is a multi-pass compiler that implements recursive descent 
+simplec is a multi-pass compiler that implements predictive
 parsing. The compiler reads as input a C source file and builds an
 intermediate representation in the form of an abstract syntax tree.
 
@@ -9,12 +9,14 @@ intermediate representation in the form of an abstract syntax tree.
 ## Installation
 > git clone ht<span>tps://github.com/jds1026/simplec.git <br>
 > cd simplec <br>
-> make
+> sh install.sh <br>
   
 ---
 
+
+
 ## Usage
-> ./simplec *somefile.c*
+> simplec *somefile.c*
 
 The compiler will create, open, and write to a file called
 *compilation.txt* in the simplec directory. The output of the
