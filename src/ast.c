@@ -161,7 +161,7 @@ void print_AST(AST_Node* node, FILE* fp)
 		else if (arithm_temp->operator == DIV_OP) {
 			op = '/';
 		}
-		fprintf(fp, "%11s>>> ARITHMIC OPERATOR \'%c\' HAS CHILDREN <<<\n", " ", op);
+		fprintf(fp, "%11s>>> ARITHMETIC OPERATOR \'%c\' HAS CHILDREN <<<\n", " ", op);
 		print_AST(arithm_temp->left, fp);
 		print_AST(arithm_temp->right, fp);
 	}
