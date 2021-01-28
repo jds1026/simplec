@@ -131,6 +131,10 @@ Token lexan()
 					tok = get_token(ht, lexbuff);
 				}
 
+				if (tok == TK_MAIN) {
+					ht_insert(ht, TK_MAIN, lexbuff);
+				}
+
 				state = 0;
 				idx = 0;
 				return tok;
