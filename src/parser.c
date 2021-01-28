@@ -121,7 +121,6 @@ AST_Node* parse_assign_stmt()
 		fprintf(stderr, "error on line %d\n", linecheck);
 		exit(1);
 	}
-
 }
 
 AST_Node* parse_expr_stmt()
