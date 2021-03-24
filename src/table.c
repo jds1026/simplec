@@ -166,7 +166,7 @@ Linked_List* list_insert(Linked_List* list, HT_item* item)
 Linked_List** create_buckets(H_table* table)
 {
 	Linked_List** buckets = (Linked_List**)calloc(table->size, 
-							sizeof(Linked_List**));
+							sizeof(Linked_List*));
 	for (unsigned int i = 0; i < table->size; i++) {
 		buckets[i] = NULL;
 	}
