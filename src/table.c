@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "simplec.h"
 
-extern HT_item* item_ptr;
+HT_item* item_ptr;
 
 unsigned long hash_f(char* key) /* hash function */
 {

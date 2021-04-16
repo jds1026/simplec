@@ -14,11 +14,7 @@ on the current input symbol
 static unsigned int state = 0;
 static unsigned int start = 0;
 
-extern H_table* ht;
-extern FILE* source;
-extern unsigned int lineno;
-extern HT_item* item_ptr;
-extern Literal_Type literal;
+Literal_Type literal;
 
 /* switch starting state */
 

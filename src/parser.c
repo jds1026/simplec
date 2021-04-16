@@ -3,11 +3,7 @@
 #include <string.h>
 #include "simplec.h"
 
-extern FILE* source;
-extern unsigned int lineno;
-extern HT_item* item_ptr;
-extern Literal_Type literal;
-
+unsigned int lineno;
 
 static unsigned int lookahead; /* next token returned by lexer */
 static unsigned int op;        /* used for ast construction */

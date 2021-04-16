@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include "simplec.h"
 
-extern H_table* ht;
-extern FILE* 	source;
-extern FILE* 	output;
+H_table* ht;
+FILE*    source;
+FILE*    output;
 
 AST_Node* prog_stmts; /* global list head for program ast */
 

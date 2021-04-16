@@ -163,12 +163,12 @@ typedef struct AST_Return_Node {
 
 /* program globals */
 
-H_table*      ht;
-HT_item*      item_ptr;
-FILE*         source;
-FILE*         output;
-Literal_Type  literal;
-unsigned int  lineno;
+extern H_table*      ht;
+extern HT_item*      item_ptr;
+extern FILE*         source;
+extern FILE*         output;
+extern Literal_Type  literal;
+extern unsigned int  lineno;
 
 /* main.c */
 
